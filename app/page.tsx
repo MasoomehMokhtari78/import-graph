@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GlowingButton } from "@/components/GlowingButton";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
@@ -12,7 +12,6 @@ export default function Home() {
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const fetchGraph = async () => {
     if (!repo) return;
 
@@ -33,6 +32,7 @@ export default function Home() {
 
     setLoading(false);
   };
+
   return (
     <div className="flex flex-col gap-6 items-center justify-center w-full h-full min-h-screen">
       <div className="flex flex-col gap-2 items-center justify-center text-center">
@@ -59,13 +59,16 @@ export default function Home() {
       {error && <p className="text-red-600">{error}</p>}
 
       {graphData && (
-        <div className="h-[600px] border rounded shadow">
+        <div>
           <ForceGraph3D
             graphData={graphData}
             nodeLabel="id"
             nodeAutoColorBy="group"
             linkDirectionalParticles={2}
             linkDirectionalArrowLength={3}
+            width={600}
+            height={600}
+            backgroundColor="rgba(0,0,0,0)"
           />
         </div>
       )}
