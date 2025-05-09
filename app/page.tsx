@@ -1,9 +1,38 @@
+"use client";
+import { useState } from "react";
 import { GlowingButton } from "@/components/GlowingButton";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
+  ssr: false,
+});
 
 export default function Home() {
+  const [repo, setRepo] = useState("");
+  const [graphData, setGraphData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchGraph = async () => {
+    if (!repo) return;
+
+    setLoading(true);
+    setError(null);
+    setGraphData(null);
+
+    try {
+      const res = await fetch(`/api/parse?repo=${repo}`);
+      const json = await res.json();
+
+      if (!res.ok) throw new Error(json.error || "Failed to load graph");
+
+      setGraphData(json);
+    } catch (err) {
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
   return (
     <div className="flex flex-col gap-6 items-center justify-center w-full h-full min-h-screen">
       <div className="flex flex-col gap-2 items-center justify-center text-center">
@@ -15,13 +44,31 @@ export default function Home() {
           project's imports!
         </p>
       </div>
+
       <div className="flex flex-col gap-6 w-full items-center">
         <Input
           placeholder="e.g. Masoomehmokhtari78/Porfolio"
           className="w-[60%] h-[56px] text-white"
+          name="repo"
+          onChange={(e) => setRepo(e.target.value)}
         />
-        <GlowingButton>Show Me the Graph</GlowingButton>
+        <GlowingButton onSubmit={fetchGraph}>Show Me the Graph</GlowingButton>
       </div>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+
+      {graphData && (
+        <div className="h-[600px] border rounded shadow">
+          <ForceGraph3D
+            graphData={graphData}
+            nodeLabel="id"
+            nodeAutoColorBy="group"
+            linkDirectionalParticles={2}
+            linkDirectionalArrowLength={3}
+          />
+        </div>
+      )}
     </div>
   );
 }
