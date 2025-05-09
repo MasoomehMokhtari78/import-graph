@@ -1,17 +1,23 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GlowingButton } from "@/components/GlowingButton";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
+import SpriteText from "three-spritetext";
+import { ForceGraphMethods } from "react-force-graph-3d";
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
+
+type NodeType = { id: string };
 
 export default function Home() {
   const [repo, setRepo] = useState("");
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const graphRef = useRef<ForceGraphMethods | null>(null);
+
   const fetchGraph = async () => {
     if (!repo) return;
 
@@ -32,6 +38,12 @@ export default function Home() {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!graphRef.current) return;
+
+    graphRef.current.cameraPosition({ x: 0, y: 0, z: 50 }, undefined, 3000);
+  }, []);
 
   return (
     <div className="flex flex-col gap-6 items-center justify-center w-full h-full min-h-screen">
@@ -69,6 +81,13 @@ export default function Home() {
             width={600}
             height={600}
             backgroundColor="rgba(0,0,0,0)"
+            ref={graphRef}
+            nodeThreeObject={(node: NodeType) => {
+              const sprite = new SpriteText(node.id);
+              sprite.color = "#c1c1c1";
+              sprite.textHeight = 8;
+              return sprite;
+            }}
           />
         </div>
       )}
