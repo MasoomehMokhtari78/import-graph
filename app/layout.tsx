@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={`${roboto.variable}  antialiased`}>
         <ShootingStars />
         <StarsBackground />
-        <div className="z-2 relative">{children}</div>
+        <div className="z-2 relative p-10">{children}</div>
       </body>
     </html>
   );

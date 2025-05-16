@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
 import SpriteText from "three-spritetext";
 import { ForceGraphMethods } from "react-force-graph-3d";
+import SpinnerIcon from "@/components/ui/SpinnerIcon";
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
@@ -63,15 +64,24 @@ export default function Home() {
           className="w-[60%] h-[56px] text-white"
           name="repo"
           onChange={(e) => setRepo(e.target.value)}
+          disabled={loading}
         />
-        <GlowingButton onSubmit={fetchGraph}>Show Me the Graph</GlowingButton>
+        <GlowingButton onSubmit={fetchGraph} loading={loading}>
+          Show Me the Graph
+        </GlowingButton>
       </div>
 
-      {loading && <p>Loading...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
+      {loading && (
+        <div className="w-[600px] h-[600px] flex gap-2 items-center justify-center border border-gray-700 rounded-xl animate-pulse bg-gray-900">
+          <p className="text-gray-500">Loading graph</p>
+          <SpinnerIcon className="text-gray-500" />
+        </div>
+      )}
       {graphData && (
-        <div>
+        <div className="relative w-[600px] h-[600px] flex items-center justify-center rounded-xl bg-white/5 backdrop-blur-2xl border border-white/20 shadow-xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 rounded-xl pointer-events-none" />
           <ForceGraph3D
             graphData={graphData}
             nodeLabel="id"
