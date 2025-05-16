@@ -18,7 +18,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const graphRef = useRef<ForceGraphMethods | null>(null);
-
   const fetchGraph = async () => {
     if (!repo) return;
 
@@ -46,6 +45,9 @@ export default function Home() {
     graphRef.current.cameraPosition({ x: 0, y: 0, z: 50 }, undefined, 3000);
   }, []);
 
+  const [selectedNode, setSelectedNode] = useState<string | undefined>(
+    undefined
+  );
   return (
     <div className="flex flex-col gap-6 items-center justify-center w-full h-full min-h-screen">
       <div className="flex flex-col gap-2 items-center justify-center text-center">
@@ -94,9 +96,15 @@ export default function Home() {
             ref={graphRef}
             nodeThreeObject={(node: NodeType) => {
               const sprite = new SpriteText(node.id);
-              sprite.color = "#c1c1c1";
+              sprite.color = node.index === selectedNode ? "yellow" : "#c1c1c1";
               sprite.textHeight = 8;
               return sprite;
+            }}
+            onNodeClick={(node) => {
+              setSelectedNode(node.index);
+            }}
+            linkColor={(link) => {
+              return link.target.index === selectedNode ? "yellow" : "#c1c1c1";
             }}
           />
         </div>
