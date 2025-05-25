@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import SpriteText from "three-spritetext";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import SpinnerIcon from "@/components/ui/SpinnerIcon";
+import * as THREE from "three";
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
@@ -38,12 +39,6 @@ export default function Home() {
 
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (!graphRef.current) return;
-
-    graphRef.current.cameraPosition({ x: 0, y: 0, z: 50 }, undefined, 3000);
-  }, []);
 
   const [selectedNode, setSelectedNode] = useState<string | undefined>(
     undefined
@@ -82,32 +77,74 @@ export default function Home() {
         </div>
       )}
       {graphData && (
-        <div className="relative w-[600px] h-[600px] flex items-center justify-center rounded-xl bg-white/5 backdrop-blur-2xl border border-white/20 shadow-xl overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 rounded-xl pointer-events-none" />
-          <ForceGraph3D
-            graphData={graphData}
-            nodeLabel="id"
-            nodeAutoColorBy="group"
-            linkDirectionalParticles={2}
-            linkDirectionalArrowLength={3}
-            width={600}
-            height={600}
-            backgroundColor="rgba(0,0,0,0)"
-            ref={graphRef}
-            nodeThreeObject={(node: NodeType) => {
-              const sprite = new SpriteText(node.id);
-              sprite.color = node.index === selectedNode ? "yellow" : "#c1c1c1";
-              sprite.textHeight = 8;
-              return sprite;
-            }}
-            onNodeClick={(node) => {
-              setSelectedNode(node.index);
-            }}
-            linkColor={(link) => {
-              return link.target.index === selectedNode ? "yellow" : "#c1c1c1";
-            }}
-          />
-        </div>
+        <>
+          <div className="flex gap-6 items-center">
+            <button
+              onClick={() => {
+                const newZoom = graphRef.current?.cameraPosition().z * 0.8;
+                graphRef.current?.cameraPosition(
+                  { x: 0, y: 0, z: newZoom },
+                  undefined,
+                  500
+                );
+              }}
+              className="bg-gray-900 px-4 py-2 h-fit rounded-sm shadow-[0_2px_15px_rgba(255,_255,_255,_0.5)] transition-shadow duration-500 hover:shadow-[0_2px_20px_rgba(255,_255,_255,_0.5)]"
+            >
+              +
+            </button>
+
+            <button
+              onClick={() => {
+                const newZoom = graphRef.current?.cameraPosition().z * 1.2;
+                graphRef.current?.cameraPosition(
+                  { x: 0, y: 0, z: newZoom },
+                  undefined,
+                  500
+                );
+              }}
+              className="text-2xl bg-gray-900 px-4 py-1 h-fit rounded-sm shadow-[0_2px_15px_rgba(255,_255,_255,_0.5)] transition-shadow duration-500 hover:shadow-[0_2px_20px_rgba(255,_255,_255,_0.5)]"
+            >
+              -
+            </button>
+
+            <button
+              onClick={() => {
+                graphRef.current?.zoomToFit();
+              }}
+              className="bg-gray-900 px-4 py-2 rounded-sm shadow-[0_2px_15px_rgba(255,_255,_255,_0.5)] transition-shadow duration-500 hover:shadow-[0_2px_20px_rgba(255,_255,_255,_0.5)]"
+            >
+              Reset Camera
+            </button>
+          </div>
+          <div className="relative w-[600px] h-[600px] flex items-center justify-center rounded-xl bg-white/5 backdrop-blur-2xl border border-white/20 shadow-xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 rounded-xl pointer-events-none" />
+            <ForceGraph3D
+              graphData={graphData}
+              nodeLabel="id"
+              nodeAutoColorBy="group"
+              linkDirectionalParticles={2}
+              linkDirectionalArrowLength={3}
+              width={600}
+              height={600}
+              backgroundColor="rgba(0,0,0,0)"
+              ref={graphRef}
+              nodeThreeObject={(node: NodeType) => {
+                const sprite = new SpriteText(node.id);
+                sprite.color =
+                  node.index === selectedNode ? "yellow" : "#c1c1c1";
+                sprite.textHeight = 8;
+                return sprite;
+              }}
+              onNodeClick={(node) => {
+                setSelectedNode(node.index);
+              }}
+              linkColor={(link) => {
+                return;
+                link.target.index === selectedNode ? "yellow" : "#c1c1c1";
+              }}
+            />
+          </div>
+        </>
       )}
     </div>
   );
