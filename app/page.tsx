@@ -130,17 +130,15 @@ export default function Home() {
               ref={graphRef}
               nodeThreeObject={(node: NodeType) => {
                 const sprite = new SpriteText(node.id);
-                sprite.color =
-                  node.index === selectedNode ? "yellow" : "#c1c1c1";
+                sprite.color = node.id === selectedNode ? "yellow" : "#c1c1c1";
                 sprite.textHeight = 8;
                 return sprite;
               }}
               onNodeClick={(node) => {
-                setSelectedNode(node.index);
+                setSelectedNode(node.id);
               }}
               linkColor={(link) => {
-                return;
-                link.target.index === selectedNode ? "yellow" : "#c1c1c1";
+                return link.target.id === selectedNode ? "yellow" : "#c1c1c1";
               }}
             />
           </div>
