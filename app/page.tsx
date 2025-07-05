@@ -138,7 +138,7 @@ export default function Home() {
               nodeAutoColorBy="group"
               linkDirectionalParticles={2}
               linkDirectionalArrowLength={3}
-              width={1000}
+              width={600}
               height={600}
               backgroundColor="rgba(0,0,0,0)"
               onNodeClick={(node) => {
