@@ -169,7 +169,6 @@ export default function Home() {
                 const isSelected = selectedNode === node.id;
                 const isConnected = connectedNodeIds.has(node.id);
 
-                // No selection? Show all clearly.
                 if (!selectedNode) {
                   sprite.color = "#c1c1c1";
                   sprite.material.opacity = 1;
@@ -181,7 +180,7 @@ export default function Home() {
                   sprite.material.opacity = 1;
                 } else {
                   sprite.color = "#c1c1c1";
-                  sprite.material.opacity = 0.2; // faded if not connected
+                  sprite.material.opacity = 0.2;
                 }
 
                 sprite.material.transparent = true;
