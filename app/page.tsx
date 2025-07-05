@@ -6,14 +6,13 @@ import dynamic from "next/dynamic";
 import SpriteText from "three-spritetext";
 import { ForceGraphMethods } from "react-force-graph-3d";
 import SpinnerIcon from "@/components/ui/SpinnerIcon";
-import * as THREE from "three";
 
 const ForceGraph3D = dynamic(() => import("react-force-graph-3d"), {
   ssr: false,
 });
 
 type NodeType = { id: string };
-type LinkType = { source: any; target: any };
+type LinkType = { source: NodeType; target: NodeType };
 type GraphData = {
   nodes: NodeType[];
   links: LinkType[];
@@ -25,12 +24,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedNode, setSelectedNode] = useState<string | undefined>();
+  const [selectedNode, setSelectedNode] = useState<
+    string | number | undefined
+  >();
   const [connectedNodeIds, setConnectedNodeIds] = useState<Set<string>>(
     new Set()
   );
 
-  const graphRef = useRef<ForceGraphMethods | null>(null);
+  const graphRef = useRef<ForceGraphMethods<NodeType, LinkType>>(null);
 
   const fetchGraph = async () => {
     if (!repo) return;
@@ -61,7 +62,7 @@ export default function Home() {
         </h1>
         <p className="text-gray-400">
           You can enter your github repo to see an interactive graph of your
-          project's imports!
+          project&apos;s imports!
         </p>
       </div>
 
@@ -92,6 +93,7 @@ export default function Home() {
           <div className="flex gap-6 items-center">
             <button
               onClick={() => {
+                //@ts-expect-error
                 const newZoom = graphRef.current?.cameraPosition().z * 0.8;
                 graphRef.current?.cameraPosition(
                   { x: 0, y: 0, z: newZoom },
@@ -106,6 +108,7 @@ export default function Home() {
 
             <button
               onClick={() => {
+                //@ts-expect-error
                 const newZoom = graphRef.current?.cameraPosition().z * 1.2;
                 graphRef.current?.cameraPosition(
                   { x: 0, y: 0, z: newZoom },
@@ -132,6 +135,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 rounded-xl pointer-events-none" />
 
             <ForceGraph3D
+              //@ts-expect-error
               ref={graphRef}
               graphData={graphData}
               nodeLabel="id"
@@ -162,6 +166,7 @@ export default function Home() {
 
                 setConnectedNodeIds(connectedIds);
               }}
+              //@ts-expect-error
               nodeThreeObject={(node: NodeType) => {
                 const sprite = new SpriteText(node.id);
                 sprite.textHeight = 8;

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 import SpinnerIcon from "./ui/SpinnerIcon";
 /* From Uiverse.io by shivam_7937 */
