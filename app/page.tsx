@@ -53,7 +53,7 @@ export default function Home() {
       } else {
         setError("An unknown error occurred");
       }
-
+    }
     setLoading(false);
   };
 
