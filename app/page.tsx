@@ -47,9 +47,12 @@ export default function Home() {
       if (!res.ok) throw new Error(json.error || "Failed to load graph");
 
       setGraphData(json);
-    } catch (err: any) {
-      setError(err.message);
-    }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
 
     setLoading(false);
   };
@@ -93,7 +96,7 @@ export default function Home() {
           <div className="flex gap-6 items-center">
             <button
               onClick={() => {
-                //@ts-expect-error
+                //@ts-expect-error: ForceGraph3D types don't fully support cameraPosition access
                 const newZoom = graphRef.current?.cameraPosition().z * 0.8;
                 graphRef.current?.cameraPosition(
                   { x: 0, y: 0, z: newZoom },
@@ -108,7 +111,7 @@ export default function Home() {
 
             <button
               onClick={() => {
-                //@ts-expect-error
+                //@ts-expect-error: ForceGraph3D types don't fully support cameraPosition access
                 const newZoom = graphRef.current?.cameraPosition().z * 1.2;
                 graphRef.current?.cameraPosition(
                   { x: 0, y: 0, z: newZoom },
@@ -135,7 +138,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 rounded-xl pointer-events-none" />
 
             <ForceGraph3D
-              //@ts-expect-error
+              //@ts-expect-error:Type 'RefObject<ForceGraphMethods<NodeType, LinkType> | null>' is not assignable to type 'MutableRefObject<ForceGraphMethods>
               ref={graphRef}
               graphData={graphData}
               nodeLabel="id"
@@ -166,7 +169,7 @@ export default function Home() {
 
                 setConnectedNodeIds(connectedIds);
               }}
-              //@ts-expect-error
+              //@ts-expect-error: Type '(node: NodeType) => SpriteText' is not assignable to type 'NodeAccessor
               nodeThreeObject={(node: NodeType) => {
                 const sprite = new SpriteText(node.id);
                 sprite.textHeight = 8;
